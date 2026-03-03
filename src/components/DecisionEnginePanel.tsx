@@ -71,19 +71,19 @@ export default function DecisionEnginePanel() {
         <div className="space-y-2">
           <div className="flex items-center justify-between p-2 bg-[#FF3D00]/10 border border-[#FF3D00]/20 rounded">
             <span className="text-sm font-medium text-[#FF3D00]">
-              1. Zone A (Hurricane)
+              1. Zone A (Chennai)
             </span>
             <span className="text-xs font-mono">CRITICAL</span>
           </div>
           <div className="flex items-center justify-between p-2 bg-orange-500/10 border border-orange-500/20 rounded">
             <span className="text-sm font-medium text-orange-400">
-              2. Zone B (Seismic)
+              2. Zone B (Cuddalore, Nagapattinam)
             </span>
             <span className="text-xs font-mono">HIGH</span>
           </div>
           <div className="flex items-center justify-between p-2 bg-yellow-500/10 border border-yellow-500/20 rounded">
             <span className="text-sm font-medium text-yellow-400">
-              3. Zone C (Flood)
+              3. Zone C (Thoothukudi)
             </span>
             <span className="text-xs font-mono">MODERATE</span>
           </div>
@@ -99,21 +99,19 @@ export default function DecisionEnginePanel() {
             <li className="flex items-start gap-2 text-sm">
               <AlertTriangle className="w-4 h-4 text-[#FF3D00] shrink-0 mt-0.5" />
               <span className="text-gray-300">
-                Deploy International Rescue Team Alpha to Zone A immediately. Wind speeds
-                exceeding 250km/h.
+                Deploy NDRF Team Alpha to Zone A (Chennai) immediately. Severe coastal storm surge reported.
               </span>
             </li>
             <li className="flex items-start gap-2 text-sm">
               <AlertTriangle className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
               <span className="text-gray-300">
-                Reroute incoming medical supplies from regional hubs to Zone B due to
-                damaged infrastructure.
+                Reroute incoming medical supplies from inland hubs (Trichy/Madurai) to Zone B (Cuddalore/Nagapattinam) due to flooded access roads.
               </span>
             </li>
             <li className="flex items-start gap-2 text-sm">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
               <span className="text-gray-300">
-                Initiate mass evacuation broadcast for Zone C low-lying coastal areas.
+                Initiate mass evacuation broadcast for Zone C (Thoothukudi) low-lying coastal areas.
               </span>
             </li>
           </ul>
@@ -124,9 +122,9 @@ export default function DecisionEnginePanel() {
             </div>
             <p className="text-xs text-gray-400 leading-relaxed italic">
               "High concentration of SOS signals (892) correlates with severe
-              weather satellite data in Zone A. Hospital capacity in adjacent regions
+              weather satellite data in Zone A. Hospital capacity in adjacent coastal regions
               is reaching critical limits (12% remaining), necessitating
-              immediate international triage and rerouting."
+              immediate triage and rerouting from inland safe zones."
             </p>
           </div>
         </div>
