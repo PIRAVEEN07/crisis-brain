@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
-import { ShieldAlert, LogOut, Activity } from "lucide-react";
+import { ShieldAlert, LogOut, Activity, Settings } from "lucide-react";
+import SettingsModal from "./SettingsModal";
 
 export default function TopNav() {
   const { currentUser } = useAuth();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleLogout = () => {
     signOut(auth);
@@ -44,15 +46,30 @@ export default function TopNav() {
               Command Operator
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
-            title="Terminate Session"
-          >
-            <LogOut className="w-5 h-5" />
-          </button>
+          
+          <div className="flex items-center gap-2 border-l border-white/10 pl-4">
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+              title="System Configuration"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleLogout}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+              title="Terminate Session"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </header>
   );
 }

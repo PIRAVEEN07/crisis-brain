@@ -1,10 +1,13 @@
 import React from "react";
 import { BrainCircuit, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { useSettings } from "../contexts/SettingsContext";
 
 export default function DecisionEnginePanel() {
+  const { settings } = useSettings();
   const severityScore = 88;
   const confidenceScore = 92;
-  const isCritical = severityScore > 75;
+  const isCritical = severityScore > settings.thresholds.severity;
+  const isConfidenceLow = confidenceScore < settings.thresholds.confidence;
 
   return (
     <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-5 h-full flex flex-col relative overflow-hidden">
@@ -34,7 +37,7 @@ export default function DecisionEnginePanel() {
           <div className="text-xs text-gray-500 mt-1">/ 100</div>
         </div>
 
-        <div className="p-4 rounded-lg border bg-white/5 border-white/10 flex flex-col items-center justify-center text-center">
+        <div className={`p-4 rounded-lg border ${isConfidenceLow ? "bg-yellow-500/10 border-yellow-500/30" : "bg-white/5 border-white/10"} flex flex-col items-center justify-center text-center`}>
           <div className="text-xs font-mono text-gray-400 uppercase mb-2">
             Confidence
           </div>
@@ -51,7 +54,7 @@ export default function DecisionEnginePanel() {
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
               <path
-                className="text-[#00E5FF]"
+                className={isConfidenceLow ? "text-yellow-400" : "text-[#00E5FF]"}
                 strokeWidth="3"
                 strokeDasharray={`${confidenceScore}, 100`}
                 stroke="currentColor"
@@ -59,7 +62,7 @@ export default function DecisionEnginePanel() {
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
             </svg>
-            <div className="absolute text-sm font-bold">{confidenceScore}%</div>
+            <div className={`absolute text-sm font-bold ${isConfidenceLow ? "text-yellow-400" : "text-white"}`}>{confidenceScore}%</div>
           </div>
         </div>
       </div>

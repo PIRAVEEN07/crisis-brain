@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -10,6 +10,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { AlertTriangle, Activity, Users, Building2 } from "lucide-react";
+import { useSettings } from "../contexts/SettingsContext";
 
 // Fix for default marker icons in Leaflet with React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -42,15 +43,6 @@ const createCustomIcon = (colorClass: string, isPulsing: boolean = false) => {
   });
 };
 
-const icons = {
-  zoneA: createCustomIcon("bg-[#FF3D00]", true), // Red, Pulsing
-  zoneB: createCustomIcon("bg-[#FF9100]"), // Orange
-  zoneC: createCustomIcon("bg-[#FFEA00]"), // Yellow
-  safe: createCustomIcon("bg-[#00E676]"), // Green
-};
-
-// We need a wrapper function because we can't call createCustomIcon before it's defined, but we can just define it above.
-// Wait, let me fix the typo above: MapComponent_createCustomIcon -> createCustomIcon
 function getIconForZone(zone: string) {
   switch (zone) {
     case "Zone A":
@@ -102,11 +94,10 @@ const tamilNaduBoundary: [number, number][] = [
   [13.4, 80.3],
 ];
 
-const cities = [
+const initialCities = [
   {
     name: "Chennai",
     position: [13.0827, 80.2707] as [number, number],
-    zone: "Zone A",
     severity: 92,
     sosCount: 1245,
     hospitalLoad: 98,
@@ -114,7 +105,6 @@ const cities = [
   {
     name: "Cuddalore",
     position: [11.7480, 79.7714] as [number, number],
-    zone: "Zone B",
     severity: 78,
     sosCount: 512,
     hospitalLoad: 85,
@@ -122,7 +112,6 @@ const cities = [
   {
     name: "Nagapattinam",
     position: [10.7656, 79.8424] as [number, number],
-    zone: "Zone B",
     severity: 72,
     sosCount: 432,
     hospitalLoad: 80,
@@ -130,7 +119,6 @@ const cities = [
   {
     name: "Thoothukudi",
     position: [8.7642, 78.1348] as [number, number],
-    zone: "Zone C",
     severity: 45,
     sosCount: 156,
     hospitalLoad: 65,
@@ -138,7 +126,6 @@ const cities = [
   {
     name: "Coimbatore",
     position: [11.0168, 76.9558] as [number, number],
-    zone: "Safe",
     severity: 15,
     sosCount: 23,
     hospitalLoad: 35,
@@ -146,7 +133,6 @@ const cities = [
   {
     name: "Madurai",
     position: [9.9252, 78.1198] as [number, number],
-    zone: "Safe",
     severity: 18,
     sosCount: 31,
     hospitalLoad: 38,
@@ -154,7 +140,6 @@ const cities = [
   {
     name: "Trichy",
     position: [10.7905, 78.7047] as [number, number],
-    zone: "Safe",
     severity: 20,
     sosCount: 45,
     hospitalLoad: 40,
@@ -162,7 +147,6 @@ const cities = [
   {
     name: "Salem",
     position: [11.6643, 78.146] as [number, number],
-    zone: "Safe",
     severity: 12,
     sosCount: 14,
     hospitalLoad: 30,
@@ -170,6 +154,7 @@ const cities = [
 ];
 
 export default function MapComponent() {
+  const { settings } = useSettings();
   const [viewState, setViewState] = useState<{
     center: [number, number];
     zoom: number;
@@ -179,6 +164,17 @@ export default function MapComponent() {
     zoom: 5,
     isTNSelected: false,
   });
+
+  const dynamicCities = useMemo(() => {
+    return initialCities.map(city => {
+      let zone = "Safe";
+      if (city.severity >= settings.riskRanges.zoneA) zone = "Zone A";
+      else if (city.severity >= settings.riskRanges.zoneB) zone = "Zone B";
+      else if (city.severity >= settings.riskRanges.zoneC) zone = "Zone C";
+      
+      return { ...city, zone };
+    });
+  }, [settings.riskRanges]);
 
   const handleFocusTN = () => {
     setViewState({
@@ -260,7 +256,7 @@ export default function MapComponent() {
         )}
 
         {/* City Markers */}
-        {(viewState.isTNSelected ? cities : []).map((city) => (
+        {(viewState.isTNSelected ? dynamicCities : []).map((city) => (
           <Marker
             key={city.name}
             position={city.position}
@@ -296,7 +292,7 @@ export default function MapComponent() {
                       </span>
                     </div>
                     <span
-                      className={`text-xs font-bold ${city.severity > 75 ? "text-[#FF3D00]" : "text-white"}`}
+                      className={`text-xs font-bold ${city.severity > settings.thresholds.severity ? "text-[#FF3D00]" : "text-white"}`}
                     >
                       {city.severity}/100
                     </span>

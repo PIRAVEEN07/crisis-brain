@@ -6,8 +6,17 @@ import {
   PhoneCall,
   ActivitySquare,
 } from "lucide-react";
+import { useSettings } from "../contexts/SettingsContext";
 
 export default function DataFusionPanel() {
+  const { settings } = useSettings();
+  
+  // Mock logic: if filtered distress posts percentage is above threshold
+  const filteredDistress = 892;
+  const totalDistress = 4281;
+  const sosPriorityScore = (filteredDistress / totalDistress) * 100;
+  const isSOSPriorityHigh = sosPriorityScore > settings.thresholds.sosPriority;
+
   return (
     <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-5 h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
@@ -28,9 +37,10 @@ export default function DataFusionPanel() {
         <MetricCard
           icon={<Radio className="w-5 h-5 text-purple-400" />}
           title="Distress Posts (Social)"
-          value="4,281"
-          subValue="Filtered: 892 high-priority"
-          raw="Raw: 12,405 posts/hr"
+          value={totalDistress.toLocaleString()}
+          subValue={`Filtered: ${filteredDistress} high-priority`}
+          raw={`Raw: 12,405 posts/hr | Priority: ${sosPriorityScore.toFixed(1)}%`}
+          alert={isSOSPriorityHigh}
         />
         <MetricCard
           icon={<Users className="w-5 h-5 text-emerald-400" />}
